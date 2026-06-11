@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Listing Launch Auditor</title>
+  <meta name="description" content="Audit digital-product listings for launch readiness, missing assets, and compliance risks.">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <style>
+    [hidden]{display:none!important}
+    .signal-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+    .signal{background:#fff;border:1px solid var(--line);padding:10px 12px}
+    .signal strong,.signal span{display:block}.signal strong{font-size:22px}.signal span{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:800;letter-spacing:.08em}
+    .price-option{border:1px solid var(--line);padding:14px;position:relative;background:#fff;color:var(--ink);text-align:left;cursor:pointer;font:inherit;border-radius:5px}
+    .price-option:hover,.price-option:focus-visible{border-color:var(--green);box-shadow:0 0 0 3px rgba(23,107,75,.12);outline:0}
+    .price-option:disabled{cursor:wait;opacity:.7}.price-option strong,.price-option span,.price-option small{display:block}.price-option small{margin-top:8px;color:var(--green);font-weight:750}
+    @media(max-width:440px){.signal-strip{grid-template-columns:1fr}.signal{display:flex;align-items:center;justify-content:space-between}.signal span{order:-1}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Listing Launch Auditor home">
+      <span class="brand-mark">JL</span>
+      <span><strong>Listing Launch Auditor</strong><small>by Jlar Digital Workflows</small></span>
+    </a>
+    <div class="top-actions">
+      <span class="free-badge">Free audit</span>
+      <button class="button secondary" id="upgrade-top" type="button">Upgrade to Pro</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="editor" aria-labelledby="audit-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">Listing draft</p><h1 id="audit-heading">Check before you publish</h1></div>
+        <button class="text-button" id="load-sample" type="button">Load sample</button>
+      </div>
+
+      <form id="audit-form">
+        <div class="field-grid three">
+          <label>Platform<select id="platform" required><option>Gumroad</option><option>Payhip</option><option>Ko-fi</option><option>Fourthwall</option><option>Buy Me a Coffee</option></select></label>
+          <label>Product type<input id="product-type" required placeholder="Template bundle"></label>
+          <label>Price (USD)<input id="price" required min="0" max="10000" step="0.01" type="number" placeholder="19"></label>
+        </div>
+        <label>Listing title<input id="title" required minlength="3" maxlength="120" placeholder="Client Onboarding Workflow Kit"></label>
+        <label>Intended buyer<input id="audience" required placeholder="Independent consultants and virtual assistants"></label>
+        <label>Description<textarea id="description" required minlength="20" rows="7" placeholder="Paste the complete storefront description..."></textarea><span class="field-note"><span id="word-count">0 words</span> · Include outcome, contents, format, and limits.</span></label>
+
+        <div class="field-grid two">
+          <label>Deliverables <span class="optional">one per line</span><textarea id="deliverables" rows="5" placeholder="Intake questionnaire (PDF)&#10;Workflow map (XLSX)&#10;Implementation checklist (PDF)"></textarea></label>
+          <label>Preview assets <span class="optional">one per line</span><textarea id="previews" rows="5" placeholder="Square cover image&#10;Three-page interior preview"></textarea></label>
+        </div>
+        <div class="field-grid two">
+          <label>Refund policy<textarea id="refund-policy" rows="4" placeholder="State when refunds are considered for this digital product."></textarea></label>
+          <label>Support text<textarea id="support-text" rows="4" placeholder="Explain how buyers can get help and expected response time."></textarea></label>
+        </div>
+        <label>Claims to verify <span class="optional">one per line</span><textarea id="claims" rows="3" placeholder="Saves two hours per project"></textarea></label>
+
+        <div class="form-footer">
+          <p>Your draft is processed for this audit only and is not published or sent anywhere.</p>
+          <button class="button primary" type="submit"><span>Run launch audit</span><span aria-hidden="true">→</span></button>
+        </div>
+        <p class="form-error" id="form-error" role="alert"></p>
+      </form>
+    </section>
+
+    <aside class="results" aria-live="polite">
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">✓</div>
+        <h2>Your audit will appear here</h2>
+        <p>Get a readiness score, launch blockers, missing assets, and a platform-specific checklist.</p>
+        <ul><li>Deterministic checks</li><li>No earnings promises</li><li>No automatic publishing</li></ul>
+      </div>
+
+      <div id="result-state" class="result-state" hidden>
+        <div class="score-panel">
+          <div class="score-ring" id="score-ring"><span id="score">0</span><small>/100</small></div>
+          <div><p class="eyebrow">Readiness</p><h2 id="decision">Revise</h2><p id="decision-copy"></p></div>
+        </div>
+        <div class="result-actions">
+          <button class="icon-button" id="print-report" type="button" title="Print or save PDF" aria-label="Print or save PDF">⌑</button>
+          <button class="button secondary" id="export-csv" type="button">Export CSV</button>
+          <button class="button secondary" id="run-again" type="button">Edit draft</button>
+        </div>
+        <div class="check-summary"><span id="checks-passed">0 of 0 checks passed</span><span id="ruleset">Ruleset</span></div>
+        <div class="signal-strip" aria-label="Issue summary">
+          <div class="signal"><strong id="blocker-count">0</strong><span>Blockers</span></div>
+          <div class="signal"><strong id="warning-count">0</strong><span>Warnings</span></div>
+          <div class="signal"><strong id="missing-count">0</strong><span>Missing</span></div>
+        </div>
+        <div id="result-groups"></div>
+        <section class="platform-card"><p class="eyebrow">Platform checklist</p><h3 id="platform-name">Gumroad</h3><ol id="platform-checklist"></ol></section>
+        <section class="pro-card">
+          <div><p class="eyebrow">Pro workspace</p><h3>Keep a launch history</h3><p>Saved audits, comparisons, team checklists, and unlimited exports.</p></div>
+          <button class="button dark" id="upgrade-result" type="button">See Pro plans</button>
+        </section>
+        <section class="product-card">
+          <p class="eyebrow">Related resource</p><h3>AI Creator Workflow Bundle</h3><p>Downloadable planning templates and review checklists. No income guarantees.</p>
+          <a href="https://jlar-shop.fourthwall.com/products/ai-creator-workflow-bundle" target="_blank" rel="noopener">View the $39 bundle →</a>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <dialog id="upgrade-dialog">
+    <button class="dialog-close" id="close-dialog" aria-label="Close" type="button">×</button>
+    <p class="eyebrow">Listing Launch Auditor Pro</p><h2>Build a repeatable launch desk</h2>
+    <div class="price-options"><button class="price-option" data-plan="monthly" type="button"><strong>$9</strong><span>/ month</span><small>Choose monthly</small></button><button class="price-option" data-plan="yearly" type="button"><strong>$49</strong><span>/ year</span><em>Best value</em><small>Choose yearly</small></button></div>
+    <ul><li>Saved audit history</li><li>PDF and CSV exports</li><li>Bundle comparisons</li><li>Fair-use unlimited audits</li></ul>
+    <p class="billing-note" id="billing-note">Choose a plan to continue to secure Stripe Checkout.</p>
+    <button class="button secondary full" id="notify-pro" type="button">Not now</button>
+  </dialog>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
+
