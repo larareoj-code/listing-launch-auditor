@@ -24,16 +24,22 @@
       <span><strong>Listing Launch Auditor</strong><small>by Jlar Digital Workflows</small></span>
     </a>
     <div class="top-actions">
-      <span class="free-badge">Free audit</span>
+      <span class="free-badge" id="plan-status">1 free audit</span>
       <button class="button secondary" id="upgrade-top" type="button">Upgrade to Pro</button>
     </div>
   </header>
 
   <main class="workspace">
     <section class="editor" aria-labelledby="audit-heading">
+      <p class="checkout-message" id="checkout-message" role="status" hidden></p>
       <div class="section-heading">
         <div><p class="eyebrow">Listing draft</p><h1 id="audit-heading">Check before you publish</h1></div>
         <button class="text-button" id="load-sample" type="button">Load sample</button>
+      </div>
+
+      <div class="completion" aria-label="Listing completion">
+        <div><span id="completion-text">0 of 9 launch fields ready</span><small>Complete the essentials before auditing</small></div>
+        <div class="completion-track"><span id="completion-bar"></span></div>
       </div>
 
       <form id="audit-form">
@@ -57,8 +63,8 @@
         <label>Claims to verify <span class="optional">one per line</span><textarea id="claims" rows="3" placeholder="Saves two hours per project"></textarea></label>
 
         <div class="form-footer">
-          <p>Your draft is processed for this audit only and is not published or sent anywhere.</p>
-          <button class="button primary" type="submit"><span>Run launch audit</span><span aria-hidden="true">→</span></button>
+          <p>Your draft is processed for this audit only. Pro history stays in this browser and is never published.</p>
+          <button class="button primary" type="submit"><span>Run launch audit</span><span aria-hidden="true">&rarr;</span></button>
         </div>
         <p class="form-error" id="form-error" role="alert"></p>
       </form>
@@ -66,7 +72,7 @@
 
     <aside class="results" aria-live="polite">
       <div id="empty-state" class="empty-state">
-        <div class="empty-icon">✓</div>
+        <div class="empty-icon" aria-hidden="true">&#10003;</div>
         <h2>Your audit will appear here</h2>
         <p>Get a readiness score, launch blockers, missing assets, and a platform-specific checklist.</p>
         <ul><li>Deterministic checks</li><li>No earnings promises</li><li>No automatic publishing</li></ul>
@@ -75,10 +81,10 @@
       <div id="result-state" class="result-state" hidden>
         <div class="score-panel">
           <div class="score-ring" id="score-ring"><span id="score">0</span><small>/100</small></div>
-          <div><p class="eyebrow">Readiness</p><h2 id="decision">Revise</h2><p id="decision-copy"></p></div>
+          <div><p class="eyebrow">Readiness</p><h2 id="decision" tabindex="-1">Revise</h2><p id="decision-copy"></p><small class="score-change" id="score-change"></small></div>
         </div>
         <div class="result-actions">
-          <button class="icon-button" id="print-report" type="button" title="Print or save PDF" aria-label="Print or save PDF">⌑</button>
+          <button class="button secondary" id="print-report" type="button" title="Print or save PDF">Print / PDF</button>
           <button class="button secondary" id="export-csv" type="button">Export CSV</button>
           <button class="button secondary" id="run-again" type="button">Edit draft</button>
         </div>
@@ -90,23 +96,28 @@
         </div>
         <div id="result-groups"></div>
         <section class="platform-card"><p class="eyebrow">Platform checklist</p><h3 id="platform-name">Gumroad</h3><ol id="platform-checklist"></ol></section>
-        <section class="pro-card">
-          <div><p class="eyebrow">Pro workspace</p><h3>Keep a launch history</h3><p>Saved audits, comparisons, team checklists, and unlimited exports.</p></div>
+        <section class="pro-card" id="pro-card">
+          <div><p class="eyebrow">Pro workspace</p><h3>Keep a launch history</h3><p>Saved audits, score comparisons, repeat audits, and PDF/CSV exports.</p></div>
           <button class="button dark" id="upgrade-result" type="button">See Pro plans</button>
+        </section>
+        <section class="history-panel" id="history-panel" hidden>
+          <header><div><p class="eyebrow">Pro workspace</p><h3>Recent audits</h3></div><button class="text-button" id="clear-history" type="button">Clear</button></header>
+          <p id="history-empty">Your completed audits will be saved in this browser.</p>
+          <ol id="history-list"></ol>
         </section>
         <section class="product-card">
           <p class="eyebrow">Related resource</p><h3>AI Creator Workflow Bundle</h3><p>Downloadable planning templates and review checklists. No income guarantees.</p>
-          <a href="https://jlar-shop.fourthwall.com/products/ai-creator-workflow-bundle" target="_blank" rel="noopener">View the $39 bundle →</a>
+          <a href="https://jlar-shop.fourthwall.com/products/ai-creator-workflow-bundle" target="_blank" rel="noopener noreferrer">View the $39 bundle &rarr;</a>
         </section>
       </div>
     </aside>
   </main>
 
   <dialog id="upgrade-dialog">
-    <button class="dialog-close" id="close-dialog" aria-label="Close" type="button">×</button>
+    <button class="dialog-close" id="close-dialog" aria-label="Close" type="button">&times;</button>
     <p class="eyebrow">Listing Launch Auditor Pro</p><h2>Build a repeatable launch desk</h2>
     <div class="price-options"><button class="price-option" data-plan="monthly" type="button"><strong>$9</strong><span>/ month</span><small>Choose monthly</small></button><button class="price-option" data-plan="yearly" type="button"><strong>$49</strong><span>/ year</span><em>Best value</em><small>Choose yearly</small></button></div>
-    <ul><li>Saved audit history</li><li>PDF and CSV exports</li><li>Bundle comparisons</li><li>Fair-use unlimited audits</li></ul>
+    <ul><li>History saved privately in this browser</li><li>PDF and CSV exports</li><li>Score comparisons</li><li>Fair-use unlimited audits</li></ul>
     <p class="billing-note" id="billing-note">Choose a plan to continue to secure Stripe Checkout.</p>
     <button class="button secondary full" id="notify-pro" type="button">Not now</button>
   </dialog>
