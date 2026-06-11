@@ -6,12 +6,12 @@ from datetime import datetime, timezone
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 from pydantic import ValidationError
 
 from passive_income_studio.auditor import RULESET_VERSION, audit_listing
-from passive_income_studio.billing import BillingConfigurationError, create_checkout_session
+from passive_income_studio.billing import BillingConfigurationError, create_checkout_session, verify_checkout_entitlement
 from passive_income_studio.schemas import ListingAuditRequest
 
 
@@ -63,6 +63,15 @@ class AuditorHandler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if path == "/api/health":
             self._json({"status": "ok", "ruleset_version": RULESET_VERSION, "external_side_effects": 0})
+            return
+        if path == "/api/entitlement":
+            session_id = parse_qs(urlparse(self.path).query).get("session_id", [""])[0]
+            try:
+                self._json(verify_checkout_entitlement(session_id))
+            except BillingConfigurationError as exc:
+                self._json({"error": str(exc)}, HTTPStatus.SERVICE_UNAVAILABLE)
+            except Exception:
+                self._json({"active": False, "reason": "verification_failed"}, HTTPStatus.BAD_GATEWAY)
             return
         if path == "/":
             self._asset("index.html")
