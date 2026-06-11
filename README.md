@@ -45,6 +45,10 @@ APP_URL
 
 The Stripe prices should be recurring prices for `$9/month` and `$49/year`. `APP_URL` must be the deployed HTTPS origin. Payment data is collected by Stripe Checkout, not this application.
 
+After a completed subscription checkout, `/api/entitlement` verifies the Stripe Checkout Session and active subscription before unlocking Pro. Pro history is stored only in that buyer's browser, capped at 25 audits, and can be cleared from the workspace. The free tier permits one completed audit per browser; repeat audits and PDF/CSV exports require verified Pro access.
+
+Production health is available at `/api/health`. The Vercel configuration also applies a restrictive Content Security Policy, clickjacking protection, MIME sniffing protection, and a limited browser permissions policy.
+
 If using the bundled Codex Python from the workspace root:
 
 ```powershell
