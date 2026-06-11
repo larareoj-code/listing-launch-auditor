@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+.pytest_cache/
+*.pyc
+data/*.log
+data/*.jsonl
+data/*.sqlite
+data/*.png
+
