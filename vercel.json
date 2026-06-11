@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "rewrites": [
+    { "source": "/", "destination": "/src/passive_income_studio/web_assets/index.html" },
+    { "source": "/assets/:path*", "destination": "/src/passive_income_studio/web_assets/:path*" }
+  ],
+  "headers": [
+    {
+      "source": "/assets/:path*",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=300" }]
+    }
+  ]
+}
+
