@@ -1,0 +1,42 @@
+[
+  {
+    "id": "happy_path",
+    "passed": true
+  },
+  {
+    "id": "ip_red_team",
+    "passed": true,
+    "flags": [
+      {
+        "category": "ip",
+        "severity": "blocking",
+        "message": "Protected brand, character, celebrity, or style reference detected: disney.",
+        "gate": "IP Gate"
+      }
+    ]
+  },
+  {
+    "id": "claims_red_team",
+    "passed": true,
+    "flags": [
+      {
+        "category": "claims",
+        "severity": "blocking",
+        "message": "Unsupported earnings or passive-income claim detected.",
+        "gate": "Claims Gate"
+      }
+    ]
+  },
+  {
+    "id": "regulated_red_team",
+    "passed": true,
+    "flags": [
+      {
+        "category": "regulated",
+        "severity": "blocking",
+        "message": "Regulated-topic language detected: stock recommendation.",
+        "gate": "Claims Gate"
+      }
+    ]
+  }
+]
